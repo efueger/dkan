@@ -6,27 +6,77 @@ use Drupal\Core\Url;
 /**
  * Preprocess.
  *
- * @param ) ($variables
+ * @param ($variables)
  *
  * @return [type]
  */
 function metastore_preprocess_node__data(&$variables) {
   $json = $variables['node']->get('field_json_metadata')->value;
+  $rows = [];
   $metadata = json_decode($json);
-  $rows = [
-    ["publisher", $metadata->publisher->name],
-    ["contactPoint", render(metastore_format_contactpoint($metadata->contactPoint))],
-  ];
+  if(property_exists($metadata, 'description')) {
+    $variables['dataset']['description'] = $metadata->description;
+  }
+  if(property_exists($metadata, 'theme')) {
+    $variables['dataset']['themes'] = $metadata->theme;
+  }
+  if(property_exists($metadata, 'keyword')) {
+    $variables['dataset']['keywords'] = $metadata->keyword;
+  }
+  if(property_exists($metadata, 'contactPoint')) {
+    $variables['dataset']['contactPoint']["name"] = [
+      '#markup' => $metadata->contactPoint->fn,
+    ];
+    $variables['dataset']['contactPoint']["email"] = [
+      '#markup' => $metadata->contactPoint->hasEmail,
+    ];
+    $formatted_contact_point = metastore_format_contactpoint($metadata->contactPoint);
+    $rows = [
+      ["contactPoint", render($formatted_contact_point)],
+    ];
+  }
+
+
+  if(property_exists($metadata, 'accessLevel')) {
+    $variables['dataset']['accessLevel'] = [
+      '#markup' => $metadata->accessLevel,
+    ];
+  }
+  if(property_exists($metadata, 'identifier')) {
+    $variables['dataset']['identifier'] = [
+      '#markup' => $metadata->identifier,
+    ];
+  }
+  if(property_exists($metadata, 'issued')) {
+    $variables['dataset']['modified'] = $metadata->issued;
+  }
+  if(property_exists($metadata, 'modified')) {
+    $variables['dataset']['modified'] = $metadata->modified;
+  }
+  if(property_exists($metadata, 'license')) {
+    $variables['dataset']['license'] = [
+      '#markup' => $metadata->license,
+    ];
+  }
+  if(property_exists($metadata, 'spatial')) {
+    $variables['dataset']['spatial'] = [
+      '#markup' => $metadata->spatial,
+    ];
+  }
+  if(property_exists($metadata, 'publisher')) {
+    $rows[] = ["publisher", $metadata->publisher->name];
+    $variables['dataset']['publisher'] = [
+      '#markup' => $metadata->publisher->name,
+    ];
+  }
+
   foreach($metadata as $property => $value) {
     if (metastore_use_in_table($property, $value)) {
       $rows[] = [$property, $value];
     }
+
   }
-  $variables['dataset']['description'] = [
-    '#markup' => $metadata->description,
-  ];
-  $variables['dataset']['themes'] = $metadata->theme;
-  $variables['dataset']['keywords'] = $metadata->keyword;
+
   $variables['dataset']['metadata_table'] = [
     '#type' => 'table',
     '#caption' => t('Additional metadata'),
@@ -39,10 +89,13 @@ function metastore_preprocess_node__data(&$variables) {
       $rows = [];
       foreach($d as $property => $value) {
         if (ctype_alnum(substr($property, 0, 1))) {
-            $rows[] = [$property, $value];
+          $rows[$property] = [
+            '#markup' => $value,
+          ];
         }
       }
-      $variables['dataset']['distributions'][] = [
+      $variables['dataset']['distributions'][] = $rows;
+      $variables['dataset']['distributions_tables'][] = [
         '#type' => 'table',
         '#caption' => $d->title,
         '#header' => [t("Key"), t("Value")],
