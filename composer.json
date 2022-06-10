@@ -68,6 +68,7 @@
             "npm-asset"
         ]
     },
+    "discard-changes": true,
     "config": {
         "allow-plugins": {
             "composer/installers": true,
