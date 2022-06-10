@@ -36,7 +36,6 @@ function metastore_preprocess_node__data(&$variables) {
     ];
   }
 
-
   if(property_exists($metadata, 'accessLevel')) {
     $variables['dataset']['accessLevel'] = [
       '#markup' => $metadata->accessLevel,
@@ -48,7 +47,7 @@ function metastore_preprocess_node__data(&$variables) {
     ];
   }
   if(property_exists($metadata, 'issued')) {
-    $variables['dataset']['modified'] = $metadata->issued;
+    $variables['dataset']['issued'] = $metadata->issued;
   }
   if(property_exists($metadata, 'modified')) {
     $variables['dataset']['modified'] = $metadata->modified;

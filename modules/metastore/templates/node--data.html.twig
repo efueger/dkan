@@ -4,6 +4,25 @@
     * Default theme implementation to display a node.
     *
     * Available variables:
+    * dataset: The information from the dataset metadata store.
+    *  - dataset.medata_table will return a table with the caption "Additional
+    *    metadata", that includes all the information in a single table, except
+    *    "title" and "description".
+    *  - dataset.distributions_tables will return an array of tables, one for each
+    *    distribution in the dataset.
+    *  - dataset.description (String)
+    *  - dataset.themes (Array) of strings
+    *  - dataset.keywords (Array) of strings
+    *  - dataset.contactPoint:
+    *    - dataset.contactPoint.name (String)
+    *    - dataset.contactPoint.email (String)
+    *  - dataset.accessLevel (String)
+    *  - dataset.identifier (String)
+    *  - dataset.issued (String)
+    *  - dataset.modified (String)
+    *  - dataset.license (String)
+    *  - dataset.spatial (String)
+    *  - dataset.publisher (String)
     * - node: The node entity with limited access to object properties and methods.
     *   Only method names starting with "get", "has", or "is" and a few common
     *   methods such as "id", "label", and "bundle" are available. For example:
